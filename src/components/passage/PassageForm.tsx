@@ -85,7 +85,7 @@ export const PassageForm = () => {
     <form
       onSubmit={handleSubmit(onSubmit)}
       className='max-w-4xl mx-auto p-6 space-y-8'>
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-wrap gap-3 items-center justify-between'>
         <div>
           <h1 className='text-3xl font-bold tracking-tight text-slate-900'>
             Create Passage
@@ -94,7 +94,10 @@ export const PassageForm = () => {
             Design a new reading passage and quiz.
           </p>
         </div>
-        <Button type='submit' isLoading={isSubmitting || validating}>
+        <Button
+          type='submit'
+          className='w-full md:w-auto'
+          isLoading={isSubmitting || validating}>
           <Save className='mr-2 h-4 w-4' />
           Save Passage
         </Button>
@@ -258,6 +261,16 @@ export const PassageForm = () => {
             </Button>
           </div>
         )}
+      </div>
+
+      <div className='flex md:items-end md:justify-end'>
+        <Button
+          type='submit'
+          className='w-full md:w-auto'
+          isLoading={isSubmitting || validating}>
+          <Save className='mr-2 h-4 w-4' />
+          Save Passage
+        </Button>
       </div>
     </form>
   )

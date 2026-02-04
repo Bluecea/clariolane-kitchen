@@ -28,7 +28,9 @@ export const DashboardLayout = () => {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
         <div className='flex h-16 items-center justify-center border-b border-slate-100'>
-          <h1 className='text-xl font-bold text-indigo-600'>Bluecea Passage</h1>
+          <h1 className='text-xl font-bold text-indigo-600'>
+            ClarioLane Admin
+          </h1>
         </div>
 
         <nav className='flex-1 space-y-1 px-4 py-6'>

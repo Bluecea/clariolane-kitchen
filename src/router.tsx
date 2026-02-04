@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import { Login } from './routes/Login'
 import { DashboardLayout } from './components/layout/DashboardLayout'
 import { PassageForm } from './components/passage/PassageForm'
@@ -24,10 +24,18 @@ export const router = createBrowserRouter([
           },
           {
             path: 'passage',
-            element: <Passages />,
+            element: <Outlet />, // Wrapper for nested passage routes
             children: [
               {
+                index: true,
+                element: <Passages />,
+              },
+              {
                 path: 'new',
+                element: <PassageForm />,
+              },
+              {
+                path: ':id',
                 element: <PassageForm />,
               },
             ],

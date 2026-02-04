@@ -24,16 +24,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true)
 
   const allowedEmailsStr = import.meta.env.VITE_ALLOWED_EMAILS || ''
-  // Handle both comma-separated string and potential JSON string if user prefers
-  let allowedEmails: string[] = []
-  try {
-    allowedEmails = allowedEmailsStr.startsWith('[')
-      ? JSON.parse(allowedEmailsStr)
-      : allowedEmailsStr.split(',').map((e: string) => e.trim())
-  } catch (e) {
-    console.warn('Failed to parse VITE_ALLOWED_EMAILS', e)
-    allowedEmails = []
-  }
+  const allowedEmails = allowedEmailsStr
+    .split(',')
+    .map((e: string) => e.trim())
+    .filter(Boolean)
 
   useEffect(() => {
     // Check active session

@@ -5,20 +5,21 @@ import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { type Passage } from '@/domain/schemas'
-import { mockTagService } from '@/services/tagService'
+import { useFetchContentTypes } from '@/tanstack'
 
 interface PassageGeneralInfoProps {
   formMethods: UseFormReturn<Passage>
+  handleTagToggle: (tag: string) => void
 }
 
 export const PassageGeneralInfo = ({
   formMethods,
+  handleTagToggle,
 }: PassageGeneralInfoProps) => {
   const {
     register,
     formState: { errors },
     watch,
-    setValue,
   } = formMethods
   const [availableTags, setAvailableTags] = useState<string[]>([])
   const selectedTags = watch('tags')
@@ -28,22 +29,11 @@ export const PassageGeneralInfo = ({
     { label: 'Medium', value: 'Medium' },
     { label: 'Hard', value: 'Hard' },
   ]
+  const { data } = useFetchContentTypes()
 
   useEffect(() => {
-    mockTagService.fetchTags().then(setAvailableTags)
-  }, [])
-
-  const handleTagToggle = (tag: string) => {
-    const current = selectedTags || []
-    if (current.includes(tag)) {
-      setValue(
-        'tags',
-        current.filter((t) => t !== tag),
-      )
-    } else {
-      setValue('tags', [...current, tag])
-    }
-  }
+    if (data) setAvailableTags(data)
+  }, [data])
 
   return (
     <Card className='p-6 space-y-6'>
@@ -75,19 +65,20 @@ export const PassageGeneralInfo = ({
           Tags
         </label>
         <div className='flex flex-wrap gap-2'>
-          {availableTags.map((tag) => (
-            <button
-              key={tag}
-              type='button'
-              onClick={() => handleTagToggle(tag)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors border ${
-                selectedTags?.includes(tag)
-                  ? 'bg-indigo-100 text-indigo-700 border-indigo-200'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
-              }`}>
-              {tag}
-            </button>
-          ))}
+          {availableTags.length > 0 &&
+            availableTags.map((tag) => (
+              <button
+                key={tag}
+                type='button'
+                onClick={() => handleTagToggle(tag)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors border ${
+                  selectedTags?.includes(tag)
+                    ? 'bg-indigo-100 text-indigo-700 border-indigo-200'
+                    : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'
+                }`}>
+                {tag}
+              </button>
+            ))}
         </div>
         {errors.tags && (
           <p className='text-sm text-red-500 mt-1'>{errors.tags.message}</p>

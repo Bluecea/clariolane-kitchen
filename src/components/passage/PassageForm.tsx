@@ -17,6 +17,7 @@ export const PassageForm = () => {
     isLoadingData,
     isSubmitting,
     isEditMode,
+    handleTagToggle,
   } = usePassageForm({
     id,
     onSuccess: () => navigate('/dashboard/passage'),
@@ -46,7 +47,10 @@ export const PassageForm = () => {
         onBack={() => navigate('/dashboard/passage')}
       />
 
-      <PassageGeneralInfo formMethods={formMethods} />
+      <PassageGeneralInfo
+        formMethods={formMethods}
+        handleTagToggle={handleTagToggle}
+      />
 
       <QuestionList
         fieldArrayMethods={fieldArrayMethods}

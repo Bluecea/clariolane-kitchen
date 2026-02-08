@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { Button } from '../components/ui/Button'
-import { Input } from '../components/ui/Input'
-import { Card } from '../components/ui/Card'
-import { supabase } from '../lib/supabase'
+import { useAuth } from '@/context/AuthContext'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Card } from '@/components/ui/Card'
+import { supabase } from '@/lib/supabase'
 
 export const Login = () => {
   const { user, loading } = useAuth()
@@ -16,7 +16,7 @@ export const Login = () => {
   if (loading) return null
   if (user) return <Navigate to='/dashboard' replace />
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.SubmitEvent) => {
     e.preventDefault()
     setIsLoginLoading(true)
     setError(null)
@@ -41,7 +41,7 @@ export const Login = () => {
             Sign in to your account
           </h2>
           <p className='mt-2 text-sm text-slate-600'>
-            Access the Passage Form Dashboard
+            Access the Clariolane Kitchen
           </p>
         </div>
 

@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { type Passage, PassageSchema } from '@/domain/schemas'
-import { passageService } from '@/services/passageService'
 import { sanitize } from '@/utils/sanitizer'
+import { useCreatePassage, useUpdatePassage } from '@/tanstack'
+import { useFetchPassage } from '@/tanstack/queries/fetchPassage'
 
 interface UsePassageFormProps {
   id?: string
@@ -13,7 +13,6 @@ interface UsePassageFormProps {
 
 export const usePassageForm = ({ id, onSuccess }: UsePassageFormProps) => {
   const isEditMode = !!id
-  const queryClient = useQueryClient()
 
   const formMethods = useForm<Passage>({
     resolver: zodResolver(PassageSchema),
@@ -35,41 +34,41 @@ export const usePassageForm = ({ id, onSuccess }: UsePassageFormProps) => {
   })
 
   // Fetch Passage Data if Edit Mode
-  const { isLoading: isLoadingData } = useQuery({
-    queryKey: ['passage', id],
-    queryFn: () => passageService.getPassage(id!),
-    enabled: isEditMode,
-    refetchOnWindowFocus: false,
-  })
+  const {
+    data,
+    refetch,
+    isLoading: isLoadingData,
+  } = useFetchPassage(id!, isEditMode)
 
   // Initialize form with data
   useEffect(() => {
     if (isEditMode && id) {
-      passageService
-        .getPassage(id)
-        .then((data) => {
-          if (data) reset(data)
-        })
-        .catch((err) => console.error('Failed to load passage', err))
+      refetch()
+      if (data) reset(data)
     }
-  }, [id, isEditMode, reset])
+  }, [id, isEditMode, reset, refetch, data])
 
   // Mutations
-  const createMutation = useMutation({
-    mutationFn: passageService.createPassage,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['passages'] })
-      onSuccess()
-    },
-  })
+  const createMutation = useCreatePassage(onSuccess)
+  const updateMutation = useUpdatePassage(onSuccess)
 
-  const updateMutation = useMutation({
-    mutationFn: (data: Passage) => passageService.updatePassage(id!, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['passages'] })
-      onSuccess()
-    },
-  })
+  const handleTagToggle = (tag: string) => {
+    const current = formMethods.watch('tags')
+    if (current.includes(tag)) {
+      formMethods.setValue(
+        'tags',
+        current.filter((t) => t !== tag),
+        { shouldValidate: true, shouldDirty: true, shouldTouch: true },
+      )
+    } else {
+      const newTags = [...current, tag]
+      formMethods.setValue('tags', newTags, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      })
+    }
+  }
 
   const onSubmit = async (data: Passage) => {
     const cleanData = {
@@ -97,5 +96,6 @@ export const usePassageForm = ({ id, onSuccess }: UsePassageFormProps) => {
     isLoadingData,
     isSubmitting: createMutation.isPending || updateMutation.isPending,
     isEditMode,
+    handleTagToggle,
   }
 }

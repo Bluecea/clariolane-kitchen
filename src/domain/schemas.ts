@@ -22,3 +22,9 @@ export const PassageSchema = z.object({
   questions: z.array(QuestionSchema),
 })
 export type Passage = z.infer<typeof PassageSchema>
+
+export const ContentTypeSchema = z.object({
+  id: z.string().uuid(),
+  content: z.string(),
+})
+export type ContentType = z.infer<typeof ContentTypeSchema>

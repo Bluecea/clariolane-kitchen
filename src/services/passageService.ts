@@ -1,5 +1,5 @@
-import { supabase } from '../lib/supabase'
-import type { Passage } from '../domain/schemas'
+import { supabase } from '@/lib/supabase'
+import type { Passage } from '@/domain/schemas'
 
 export const passageService = {
   fetchPassages: async (page: number, limit: number) => {
@@ -12,8 +12,6 @@ export const passageService = {
         },
       },
     )
-
-    console.log(error)
 
     if (error) throw error
     return data as {
@@ -63,5 +61,12 @@ export const passageService = {
     })
     if (error) throw error
     return data
+  },
+
+  getContentTypes: async () => {
+    const contents = await supabase.from('content_types').select('content')
+    if (contents.error) throw contents.error
+    const data = contents.data as { content: string }[]
+    return data.map((d) => d.content)
   },
 }

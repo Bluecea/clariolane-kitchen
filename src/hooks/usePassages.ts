@@ -1,22 +1,12 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { passageService } from '@/services/passageService'
+import { useFetchPassages, useDeletePassage } from '@/tanstack'
 
 export const usePassages = (pageSize: number = 10) => {
   const [page, setPage] = useState(1)
-  const queryClient = useQueryClient()
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['passages', page],
-    queryFn: () => passageService.fetchPassages(page, pageSize),
-  })
+  const { data, isLoading, isError, error } = useFetchPassages(page, pageSize)
 
-  const deleteMutation = useMutation({
-    mutationFn: passageService.deletePassage,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['passages'] })
-    },
-  })
+  const deleteMutation = useDeletePassage(page)
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this passage?')) {

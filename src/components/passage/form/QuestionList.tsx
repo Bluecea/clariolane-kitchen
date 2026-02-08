@@ -59,6 +59,11 @@ export const QuestionList = ({
               error={errors.questions?.[index]?.question?.message}
               {...register(`questions.${index}.question`)}
             />
+            <input
+              type='hidden'
+              {...register(`questions.${index}.id`)}
+              defaultValue={field.id}
+            />
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               {[0, 1, 2, 3].map((optIndex) => (

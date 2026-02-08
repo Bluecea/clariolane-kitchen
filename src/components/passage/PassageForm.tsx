@@ -55,6 +55,7 @@ export const PassageForm = () => {
       <QuestionList
         fieldArrayMethods={fieldArrayMethods}
         register={register}
+        control={formMethods.control}
         errors={errors}
       />
 

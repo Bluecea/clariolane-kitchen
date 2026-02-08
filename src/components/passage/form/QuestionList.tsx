@@ -2,6 +2,8 @@ import {
   type UseFieldArrayReturn,
   type UseFormRegister,
   type FieldErrorsImpl,
+  type Control,
+  Controller,
 } from 'react-hook-form'
 import { Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -12,12 +14,14 @@ import { type Passage } from '@/domain/schemas'
 interface QuestionListProps {
   fieldArrayMethods: UseFieldArrayReturn<Passage, 'questions', 'id'>
   register: UseFormRegister<Passage>
+  control: Control<Passage>
   errors: Partial<FieldErrorsImpl<Passage>>
 }
 
 export const QuestionList = ({
   fieldArrayMethods,
   register,
+  control,
   errors,
 }: QuestionListProps) => {
   const { fields, append, remove } = fieldArrayMethods
@@ -65,28 +69,33 @@ export const QuestionList = ({
               defaultValue={field.id}
             />
 
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              {[0, 1, 2, 3].map((optIndex) => (
-                <div key={optIndex} className='flex items-center gap-2'>
-                  <input
-                    type='radio'
-                    value={optIndex}
-                    {...register(`questions.${index}.correctIndex`, {
-                      valueAsNumber: true,
-                    })}
-                    className='h-4 w-4 text-indigo-600 focus:ring-indigo-500'
-                  />
-                  <Input
-                    placeholder={`Option ${optIndex + 1}`}
-                    className='flex-1'
-                    error={
-                      errors.questions?.[index]?.options?.[optIndex]?.message
-                    }
-                    {...register(`questions.${index}.options.${optIndex}`)}
-                  />
+            <Controller
+              control={control}
+              name={`questions.${index}.correctIndex`}
+              render={({ field: { value, onChange } }) => (
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  {[0, 1, 2, 3].map((optIndex) => (
+                    <div key={optIndex} className='flex items-center gap-2'>
+                      <input
+                        type='radio'
+                        checked={value === optIndex}
+                        onChange={() => onChange(optIndex)}
+                        className='h-4 w-4 text-indigo-600 focus:ring-indigo-500'
+                      />
+                      <Input
+                        placeholder={`Option ${optIndex + 1}`}
+                        className='flex-1'
+                        error={
+                          errors.questions?.[index]?.options?.[optIndex]
+                            ?.message
+                        }
+                        {...register(`questions.${index}.options.${optIndex}`)}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+            />
             {errors.questions?.[index]?.correctIndex && (
               <p className='text-sm text-red-500'>
                 Please select the correct answer.

@@ -5,6 +5,8 @@ import { PassageForm } from './components/passage/PassageForm'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import Overview from './routes/dashboard/overview'
 import Passages from './routes/dashboard/passages'
+import { FeedbacksPage } from './routes/dashboard/feedbacks'
+import { FeedbackDetailPage } from './routes/dashboard/feedback-detail'
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +23,19 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: <Overview />,
+          },
+          {
+            path: 'feedbacks',
+            children: [
+              {
+                index: true,
+                element: <FeedbacksPage />,
+              },
+              {
+                path: ':id',
+                element: <FeedbackDetailPage />,
+              },
+            ],
           },
           {
             path: 'passage',

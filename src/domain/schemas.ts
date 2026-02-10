@@ -28,3 +28,33 @@ export const ContentTypeSchema = z.object({
   content: z.string(),
 })
 export type ContentType = z.infer<typeof ContentTypeSchema>
+
+export const FeedbackUserSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+})
+export type FeedbackUser = z.infer<typeof FeedbackUserSchema>
+
+export const FeedbackSchema = z.object({
+  id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  category: z.enum(['bug', 'feature', 'general']),
+  message: z.string(),
+  status: z.enum(['pending', 'reviewed', 'resolved']).default('pending'),
+  is_read: z.boolean().default(false),
+  created_at: z.string(),
+  updated_at: z.string(),
+  user: FeedbackUserSchema,
+})
+export type Feedback = z.infer<typeof FeedbackSchema>
+
+export const FeedbackResponseSchema = z.object({
+  data: z.array(FeedbackSchema),
+  meta: z.object({
+    page: z.number(),
+    limit: z.number(),
+    total: z.number(),
+    totalPages: z.number(),
+  }),
+})
+export type FeedbackResponse = z.infer<typeof FeedbackResponseSchema>

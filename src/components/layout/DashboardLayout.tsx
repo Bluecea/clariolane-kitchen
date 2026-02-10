@@ -1,15 +1,31 @@
 import { useState } from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
-import { Menu, LogOut, FileText, LayoutDashboard, User } from 'lucide-react'
+import { useUnreadFeedbackCount } from '@/tanstack/queries/feedbackQueries'
+import {
+  Menu,
+  LogOut,
+  FileText,
+  LayoutDashboard,
+  User,
+  Bell,
+} from 'lucide-react'
 
 export const DashboardLayout = () => {
   const { user, signOut } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
+  const { data: unreadCount = 0 } = useUnreadFeedbackCount()
+
   const navigation = [
     { name: 'Overview', href: '/dashboard', icon: LayoutDashboard, end: true },
     { name: 'Passage', href: '/dashboard/passage', icon: FileText },
+    {
+      name: 'Feedbacks',
+      href: '/dashboard/feedbacks',
+      icon: Bell,
+      badge: unreadCount > 0 ? unreadCount : undefined,
+    },
   ]
 
   return (
@@ -41,14 +57,21 @@ export const DashboardLayout = () => {
               end={item.end}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                `flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-indigo-50 text-indigo-700'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`
               }>
-              <item.icon className='mr-3 h-5 w-5' />
-              {item.name}
+              <div className='flex items-center'>
+                <item.icon className='mr-3 h-5 w-5' />
+                {item.name}
+              </div>
+              {item.badge ? (
+                <span className='ml-auto inline-flex items-center justify-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800'>
+                  {item.badge}
+                </span>
+              ) : null}
             </NavLink>
           ))}
         </nav>
